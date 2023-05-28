@@ -11,7 +11,7 @@ class VakinhaAppBar extends AppBar {
           centerTitle: true,
           title: Image.asset(
             "assets/images/logo_title.png",
-            height: 40,
+            height: 30,
           ),
           iconTheme: const IconThemeData(color: Colors.black),
         );

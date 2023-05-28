@@ -34,7 +34,9 @@ class SplashPage extends StatelessWidget {
                 VakinhaButton(
                   label: "Acessar",
                   width: context.widthTransformer(reducedBy: 40),
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.toNamed('auth/login');
+                  },
                 )
               ],
             ),
