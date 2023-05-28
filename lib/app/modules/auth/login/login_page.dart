@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:vakinha_burger/app/core/ui/vakinha_ui.dart';
 import 'package:vakinha_burger/app/core/ui/widgets/vakinha_app_bar.dart';
 import 'package:vakinha_burger/app/core/ui/widgets/vakinha_button.dart';
-import 'package:vakinha_burger/app/core/ui/widgets/vakinha_text_form_fiel.dart';
+import 'package:vakinha_burger/app/core/ui/widgets/vakinha_text_form_field.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -31,9 +31,9 @@ class LoginPage extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                     color: context.theme.primaryColorDark)),
                             const SizedBox(height: 30),
-                            const VakinhaTextFormFiel(label: "E-mail"),
+                            const VakinhaTextFormField(label: "E-mail"),
                             const SizedBox(height: 30),
-                            const VakinhaTextFormFiel(label: "Senha"),
+                            const VakinhaTextFormField(label: "Senha"),
                             const SizedBox(height: 50),
                             VakinhaButton(
                                 label: "ENTRAR",
@@ -46,7 +46,9 @@ class LoginPage extends StatelessWidget {
                               children: [
                                 const Text("Não possui uma conta?"),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Get.toNamed('auth/register');
+                                  },
                                   child: const Text(
                                     "Cadastre-se",
                                     style: VakinhaUI.textBold,
