@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:vakinha_burger/app/core/ui/vakinha_state.dart';
 import 'package:vakinha_burger/app/core/ui/widgets/vakinha_app_bar.dart';
 import 'package:get/get.dart';
 import 'package:vakinha_burger/app/core/ui/widgets/vakinha_button.dart';
 import 'package:vakinha_burger/app/core/ui/widgets/vakinha_text_form_field.dart';
+import 'package:vakinha_burger/app/modules/auth/register/register_controller.dart';
+import 'package:validatorless/validatorless.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState
+    extends VakinhaState<RegisterPage, RegisterController> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameEC = TextEditingController();
+  final _emailEC = TextEditingController();
+  final _passwordEC = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +31,7 @@ class RegisterPage extends StatelessWidget {
             child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Form(
+                  key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -29,19 +44,55 @@ class RegisterPage extends StatelessWidget {
                         style: context.textTheme.bodyLarge,
                       ),
                       const SizedBox(height: 20),
-                      const VakinhaTextFormField(label: "Nome*"),
+                      VakinhaTextFormField(
+                        label: "Nome*",
+                        controller: _nameEC,
+                        validator: Validatorless.required("Nome obrigatório"),
+                      ),
                       const SizedBox(height: 20),
-                      const VakinhaTextFormField(label: "E-mail*"),
+                      VakinhaTextFormField(
+                          label: "E-mail*",
+                          controller: _emailEC,
+                          validator: Validatorless.multiple([
+                            Validatorless.required("E-mail obrigatório"),
+                            Validatorless.email("E-mail inválido"),
+                          ])),
                       const SizedBox(height: 20),
-                      const VakinhaTextFormField(label: "Senha*"),
+                      VakinhaTextFormField(
+                        label: "Senha*",
+                        controller: _passwordEC,
+                        validator: Validatorless.multiple([
+                          Validatorless.required("Senha obrigatória"),
+                          Validatorless.min(
+                              6, 'Senha deve ter no mínimo 6 caracteres'),
+                        ]),
+                        obscureText: true,
+                      ),
                       const SizedBox(height: 20),
-                      const VakinhaTextFormField(label: "Confirmar senha*"),
+                      VakinhaTextFormField(
+                        label: "Confirmar senha*",
+                        validator: Validatorless.multiple([
+                          Validatorless.required("Confirma senha obrigatória"),
+                          Validatorless.compare(
+                              _passwordEC, "Senha não confere"),
+                        ]),
+                        obscureText: true,
+                      ),
                       const SizedBox(height: 20),
                       VakinhaButton(
                         label: "CADASTRAR",
                         width: context.width,
                         height: 40,
-                        onPressed: () {},
+                        onPressed: () {
+                          final formValid =
+                              _formKey.currentState?.validate() ?? false;
+                          if (formValid) {
+                            controller.register(
+                                name: _nameEC.text,
+                                email: _emailEC.text,
+                                password: _passwordEC.text);
+                          }
+                        },
                       ),
                     ],
                   ),
