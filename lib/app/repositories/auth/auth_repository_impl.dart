@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:vakinha_burger/app/core/exceptions/user_not_found_exception.dart';
 import 'package:vakinha_burger/app/core/rest_client/rest_client.dart';
 import 'package:vakinha_burger/app/models/user_model.dart';
@@ -41,8 +40,8 @@ class AuthRepositoryImpl extends AuthRepository {
       'password': password,
     });
 
+    var message = "Erro ao autenticar o usuário";
     if (result.hasError) {
-      var message = "Erro ao autenticar o usuário";
       if (result.statusCode == 403) {
         message = "Usuário ou senha inválidos";
         log(message, error: result.statusText, stackTrace: StackTrace.current);
@@ -52,6 +51,28 @@ class AuthRepositoryImpl extends AuthRepository {
           error: result.statusText, stackTrace: StackTrace.current);
       throw RestClientException(message);
     }
-    return UserModel.fromMap(result.body);
+
+    final token = result.body["access_token"];
+    _restClient.setToken(token);
+    return await user(email);
+  }
+
+  @override
+  Future<UserModel> user(String email) async {
+    final res = await _restClient.get<List<dynamic>>(
+      '/users',
+      query: {"email": email},
+    );
+    if (res.hasError) {
+      log("Erro ao buscar usuário + (${res.statusCode})",
+          error: res.statusText, stackTrace: StackTrace.current);
+      throw RestClientException("Erro interno");
+    }
+    if (res.body!.isNotEmpty) {
+      return UserModel.fromMap(res.body![0]);
+    } else {
+      log("Erro ao buscar usuário");
+      throw RestClientException("Erro interno");
+    }
   }
 }
